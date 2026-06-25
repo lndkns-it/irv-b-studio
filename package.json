@@ -7,8 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=apps/web",
+    "dev": "concurrently --names \"web,worker\" --prefix-colors \"magenta,cyan\" \"npm run dev --workspace=apps/web\" \"npm run dev --workspace=@irv-b/worker\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:worker": "npm run dev --workspace=@irv-b/worker",
     "build": "npm run build --workspace=apps/web",
     "lint": "npm run lint --workspace=apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
   }
 }

@@ -1,0 +1,102 @@
+// Prisma schema for Irv. B Music Studio
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// An artist using the platform.
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  name       String
+  artistName String?  @map("artist_name")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  tracks       Track[]
+  chatMessages ChatMessage[]
+
+  @@map("users")
+}
+
+/// A music track uploaded by an artist.
+model Track {
+  id        String      @id @default(uuid())
+  userId    String      @map("user_id")
+  title     String
+  audioUrl  String      @map("audio_url")
+  lyrics    String?
+  status    TrackStatus @default(QUEUED)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis  Analysis?
+  pressKits PressKit[]
+
+  @@index([userId])
+  @@map("tracks")
+}
+
+/// The AI-generated analysis of a track.
+model Analysis {
+  id                String   @id @default(uuid())
+  trackId           String   @unique @map("track_id")
+  mood              String?
+  genres            String[]
+  themes            Json?
+  suggestedMetadata Json?    @map("suggested_metadata")
+  completedAt       DateTime @default(now()) @map("completed_at")
+
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@map("analyses")
+}
+
+/// AI-generated press material for a track.
+model PressKit {
+  id        String       @id @default(uuid())
+  trackId   String       @map("track_id")
+  type      PressKitType
+  language  String
+  content   String
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@index([trackId])
+  @@map("press_kits")
+}
+
+/// A message in the catalog-aware chat.
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  role      String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("chat_messages")
+}
+
+enum TrackStatus {
+  QUEUED
+  PROCESSING
+  DONE
+  ERROR
+}
+
+enum PressKitType {
+  BIO
+  PRESS_NOTE
+  SOCIAL
+}

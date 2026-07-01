@@ -6,7 +6,7 @@
  * in Week 3.
  */
 
-import { prisma } from "./db.js";
+import { prisma } from "@irv-b/database";
 
 async function main(): Promise<void> {
   console.log("🎧 Irv. B worker is up and running.");

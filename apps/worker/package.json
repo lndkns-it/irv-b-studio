@@ -10,11 +10,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
-    "prisma": "^6.19.3",
     "tsx": "^4.22.4",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3"
+    "@irv-b/database": "*"
   }
 }

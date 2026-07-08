@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  // Transpile the shared database package (it ships TypeScript source)
+  transpilePackages: ["@irv-b/database"],
 };
 
 export default nextConfig;

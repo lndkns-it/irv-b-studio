@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@irv-b/database";
+import { createAnalysisQueue } from "@irv-b/queue";
 import { getCurrentUser } from "@/lib/session";
 
 /**
  * POST /api/tracks
  *
- * Creates a track record after its audio has been uploaded to S3. Stores the
- * S3 object key (not a public URL) — playback later uses a presigned URL.
+ * Creates a track record after its audio has been uploaded to S3, then enqueues
+ * an analysis job for the worker to process.
  */
 export async function POST(request: Request) {
     const user = await getCurrentUser();
@@ -34,6 +35,10 @@ export async function POST(request: Request) {
             lyrics: typeof lyrics == "string" ? lyrics : null,
         },
     });
+
+    const queue = createAnalysisQueue();
+    await queue.add("analyze", { trackId: track.id, userId: user.id});
+    await queue.close();
 
     return NextResponse.json({ track }, { status: 201 });
 }

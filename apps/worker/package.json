@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node --env-file=.env dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
@@ -14,6 +14,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@irv-b/database": "*"
+    "@irv-b/database": "*",
+    "@irv-b/queue": "*",
+    "bullmq": "^6.3.4"
   }
 }

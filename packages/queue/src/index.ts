@@ -1,0 +1,43 @@
+import { Queue, type ConnectionOptions } from "bullmq";
+
+/**
+ * Shared queue definitions for Irv. B Music Studio.
+ *
+ * This package centralizes the queue name, its job payload contract, and the
+ * Redis connection, so the producer (web) and the consumer (worker) can never
+ * disagree about the shape of a job.
+ */
+
+/** the single queue used for track analysus jobs. */
+export const ANALYSIS_QUEUE_NAME = "track-analysis";
+
+/** The payload contract for an analysis job - the single source of truth. */
+export interface AnalysisJobData {
+    trackId: string;
+    userId: string;
+}
+
+/**
+ * Builds the Redis connection options from the REDIS_URL environment variable.
+ * BullMQ requires `maxRetriesPerRequest: null` for its blocking operations.
+ */
+export function getConnection(): ConnectionOptions {
+    const url = process.env.REDIS_URL;
+    if(!url) {
+        throw new Error("REDIS_URL environment variable is not set");
+    }
+    return {
+        url,
+        maxRetriesPerRequest: null,
+    } as ConnectionOptions
+}
+
+/**
+ * Creates a Queue instance for producing jobs (used by the web app).
+ * The worker consumes with its own Worker instance, defined separately.
+ */
+export function createAnalysisQueue(): Queue<AnalysisJobData> {
+    return new Queue<AnalysisJobData>(ANALYSIS_QUEUE_NAME, {
+        connection: getConnection(),
+    });
+}

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Create a session token
-    const token = createToken({ userId: user.id, email: user.enail });
+    const token = createToken({ userId: user.id, email: user.email });
 
     // 5. Return the user and set the session cookie
     const response = NextResponse.json({

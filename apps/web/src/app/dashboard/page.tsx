@@ -3,7 +3,7 @@ import Link from "next/link";
 import { prisma } from "@irv-b/database";
 import { getCurrentUser } from "@/lib/session";
 import { LogoutButton } from "@/components/LogoutButton";
-import { TrackTable } from "@/components/tracks/TrackTable";
+import { LiveTrackTable } from "@/components/tracks/LiveTrackTable";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -47,7 +47,7 @@ export default async function DashboardPage() {
                     <Button size="sm">Upload track</Button>
                 </Link>
                 </div>
-                <TrackTable tracks={tracks} />
+                <LiveTrackTable initialTracks={tracks} />
             </section>
         </main>
     );

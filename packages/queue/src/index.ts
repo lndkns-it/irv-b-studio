@@ -1,4 +1,5 @@
 import { Queue, type ConnectionOptions } from "bullmq";
+import { Redis } from "ioredis";
 
 /**
  * Shared queue definitions for Irv. B Music Studio.
@@ -40,4 +41,38 @@ export function createAnalysisQueue(): Queue<AnalysisJobData> {
     return new Queue<AnalysisJobData>(ANALYSIS_QUEUE_NAME, {
         connection: getConnection(),
     });
+}
+
+/** The redis channel for track status updates */
+export const TRACK_UPDATES_CHANNEL = "track_updates";
+
+/** The payload published when a track's status changes. */
+export interface TrackUpdateMessage {
+    trackId: string;
+    userId: string;
+    status: string;
+}
+
+/**
+ * Creates a raw ioredis connection. Used for pub/sub, which needs a dedicated
+ * connection (a subscribed connection cannot run other commands).
+ */
+export function createRedisConnection(): Redis {
+    const url = process.env.REDIS_URL;
+    if(!url) {
+        throw new Error("REDIS_URL environment vriable is not set");
+    }
+    return new Redis(url, { maxRetriesPerRequest: null});
+}
+
+/**
+ * Publishes a track status update to the pub/sub channel. Called by the worker
+ * whenever a track changes state, so subscribers (the SSE endpoint) are notified
+ * in real time.
+ */
+export async function publishTrackUpdate(
+    publisher: Redis,
+    message: TrackUpdateMessage,
+): Promise<void> {
+    await publisher.publish(TRACK_UPDATES_CHANNEL, JSON.stringify(message));
 }

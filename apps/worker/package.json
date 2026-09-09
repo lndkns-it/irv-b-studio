@@ -14,8 +14,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0",
     "@irv-b/database": "*",
     "@irv-b/queue": "*",
-    "bullmq": "^6.3.4"
+    "bullmq": "^6.3.4",
+    "zod": "^4.5.4"
   }
 }

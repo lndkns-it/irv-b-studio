@@ -1,0 +1,30 @@
+{
+  "common": {
+    "appName": "Irv. B Studio",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "signUp": "Crear cuenta",
+    "email": "Correo",
+    "password": "Contraseña",
+    "loading": "Cargando…"
+  },
+  "nav": {
+    "catalog": "Catálogo",
+    "analysis": "Análisis",
+    "pressKits": "Press kits",
+    "chat": "Chat"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido, {name}",
+    "yourTracks": "Tu catálogo",
+    "uploadTrack": "Subir track",
+    "empty": "Aún no hay tracks",
+    "emptyHint": "Sube tu primer track para empezar."
+  },
+  "status": {
+    "queued": "En cola",
+    "processing": "Procesando",
+    "done": "Listo",
+    "error": "Error"
+  }
+}

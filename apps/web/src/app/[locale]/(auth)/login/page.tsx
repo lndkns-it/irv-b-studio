@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { Link } from "@/i18n/navigation";
 
 /**
  * Login page.
@@ -98,9 +99,9 @@ export default function LoginPage() {
 
                 <p className="text-sm text-content-muted mt-6 text-center">
                     Don&apos;t have an account?{" "}
-                    <a href="/register" className="text-brand-700 font-medium hover:underline">
+                    <Link href="/register" className="text-brand-700 font-medium hover:underline">
                         Create one
-                    </a>
+                    </Link>
                 </p>
             </div>
         </main>

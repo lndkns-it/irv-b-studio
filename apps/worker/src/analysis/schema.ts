@@ -17,4 +17,33 @@ export const moodGenreSchema = z.object({
         .describe("Up to three musical genres, most likely first"),
 });
 
+export const themesSchema = z.object({
+    themes: z
+        .array(
+            z.object({
+                theme: z.string().describe("A short theme name"),
+                confidence: z
+                    .number()
+                    .min(0)
+                    .max(1)
+                    .describe("Confidence from 0 to 1"),
+            }),
+        )
+        .max(5)
+        .describe("Up to five lyrical themes"),
+});
+
+export const metadataSchema = z.object({
+    distributionTags: z
+        .array(z.string())
+        .max(8)
+        .describe("Tags for distribution platforms"),
+    description: z
+        .string()
+        .max(500)
+        .describe("A short marketing description of the track"),
+});
+
 export type MoodGenreResult = z.infer<typeof moodGenreSchema>;
+export type ThemesResult = z.infer<typeof themesSchema>;
+export type MetadataResult = z.infer<typeof metadataSchema>;

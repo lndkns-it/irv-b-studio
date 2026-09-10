@@ -14,7 +14,7 @@ import { ANALYSIS_QUEUE_NAME,
   type AnalysisJobData,
  } from "@irv-b/queue";
 import { prisma } from "@irv-b/database";
-import { analyzeMoodGenre } from "./analysis/mood-genre";
+import { runAnalysisPipeline } from "./analysis/pipeline.js";
 import { Redis } from "ioredis";
 import type { TrackStatus } from "@irv-b/database";
 
@@ -46,9 +46,33 @@ async function processJob(data: AnalysisJobData): Promise<void> {
     throw new Error(`Track ${trackId} not found`);
   }
 
-  // Step 1: analyze mood and genre with Claude
-  const moodGenre = await analyzeMoodGenre(track.title, track.lyrics);
-  console.log(`🎨 Mood: ${moodGenre.mood}, Genres: ${moodGenre.genres.join(", ")}`);
+  // Run the full analysis pipeline (mood/genre -> themes -> metadata)
+  const result = await runAnalysisPipeline(track.title, track.lyrics);
+  console.log(`🎨 ${track.title}: ${result.mood} | ${result.genres.join(", ")}`);
+
+  // Persist the analysis (upsert: create, or replace if re-analyzed)
+  await prisma.analysis.upsert({
+    where: { trackId },
+    create: {
+      trackId,
+      mood: result.mood,
+      genres: result.genres,
+      themes: result.themes,
+      suggestedMetadata: {
+        distributionTags: result.distributionTags,
+        description: result.description,
+      },
+    },
+    update: {
+      mood: result.mood,
+      genres: result.genres,
+      themes: result.themes,
+      suggestedMetadata: {
+        distributionTags: result.distributionTags,
+        description: result.description,
+      },
+    },
+  });
 
   // Mark the track as done
   await setTrackStatus(trackId, userId, "DONE");
